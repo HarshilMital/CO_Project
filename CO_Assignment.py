@@ -57,7 +57,7 @@ if possible.
 Edge case: last statement is a label (instead of halt, which should raise an error later)
 '''
 # inp = [i.split() for i in ['move r1 r2', 'label1:', 'add r1 r2', 'label2:', 'sub r1 r2']]
-inp = [i.split() for i in ['var a', 'var b', 'var c', 'mov r1 r2','label1:', 'add r1 r2', 'label2: sub r3 r4']]
+# inp = [i.split() for i in ['var a', 'var b', 'var c', 'mov r1 r2','label1:', 'add r1 r2', 'label2: sub r3 r4']]
 
 
 labelInds = []
@@ -103,9 +103,9 @@ for i in range(len(inp)):
         inp[i].pop(0)
 
 
-print(labels)
-print(variables)
-print(inp)
+# print(labels)
+# print(variables)
+# print(inp)
 
 
 
