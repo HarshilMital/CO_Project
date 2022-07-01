@@ -213,6 +213,36 @@ def registerHandler(proposedRegister):
         global error
         error = True
         return '-1'
+
+def Output_funtion():
+    for i in range(len(inp)):
+        Type=typeFinder(i)
+        if (Type=='A'):
+            print(opcodes(i[0]) + '00' + registerHandler(i[1]) 
+            + registerHandler(i[2])+ registerHandler(i[3]))
+        elif (Type=='B'):
+            print(opcodes[i[0]] + registerHandler(i[1]) 
+            + immediateHandler(i[2]))
+        elif(Type=='C'):
+            print(opcodes[i[0]] + '00000' + registerHandler(i[1]) + registerHandler(i[2]))
+        elif(Type=='D'):
+            for j in variables:
+                if j==i[2]:
+                    memory_address=immediateHandler(j)
+            for j in lables:
+                if j==i[2]:
+                    memory_address=immediateHandler(j)
+            print(opcodes[i[0]] + registerHandler(i[1]) + str(memory_address))
+        elif(Type=='E'):
+            for j in variables:
+                if j==i[1]:
+                    memory_address=immediateHandler(j)
+            for j in lables:
+                if j==i[1]:
+                    memory_address=immediateHandler(j)
+            print(opcodes[i[0]]+'000'+ str(memory_address))
+        elif(Type=='F'):
+            print(opcodes[i[0]]+'00000000000')
         
 
 
