@@ -22,9 +22,9 @@ def binary(n):
     #takes string/integer n and converts it to binary string
     return bin(int(n))[2:]
 
-#15 registers, r0 to r7 (r7 being FLAGS), each denoted by its index
+#8 registers, r0 to r7 (r7 being FLAGS), each denoted by its index
 #each register stores 2 bytes, i.e. 16 bits
-registers = ['0000000000000000' for i in range(16)]
+registers = ['0000000000000000' for i in range(8)]
 regAddress = {'reg0':'000',' reg1':'001', 'reg2':'010', 'reg3':'011', 'reg4':'100', 'reg5':'101', 'reg6':'110', 'FLAGS':'111'}
 
 
