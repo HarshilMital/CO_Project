@@ -100,11 +100,12 @@ labels = {}
 for i in range(len(inp)):
     if (inp[i][0][-1]==':'):
         labels[inp[i][0][:-1]] = i
+        inp[i].pop(0)
 
 
-# print(labels)
-# print(variables)
-# print(inp)
+print(labels)
+print(variables)
+print(inp)
 
 
 
