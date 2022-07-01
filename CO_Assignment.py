@@ -17,11 +17,6 @@ opcodes =  {'add':'10000', 'sub':'10001', 'ld':'10100', 'st':'10101', 'mul':'101
 types = {'A':['add', 'sub', 'mul', 'xor', 'or', 'and'], 'B':['rs', 'ls'], 'C':['div', 'not', 'cmp'], 'D':['ld','st'], 'E':['jmp', 'jlt', 'jgt', 'je'], 'F':['hlt']}
 
 
-#decimal to binary converter
-def binary(n):
-    #takes string/integer n and converts it to binary string
-    return bin(int(n))[2:]
-
 #8 registers, r0 to r7 (r7 being FLAGS), each denoted by its index
 #each register stores 2 bytes, i.e. 16 bits
 registers = ['0000000000000000' for i in range(8)]
@@ -30,6 +25,13 @@ regAddress = {'reg0':'000',' reg1':'001', 'reg2':'010', 'reg3':'011', 'reg4':'10
 
 #512 byte memory, 256 address, two bytes each
 memory = ['0000000000000000' for i in range(256)]
+
+
+#decimal to binary converter
+def binary(n):
+    #takes string/integer n and converts it to binary string
+    return bin(int(n))[2:]
+
 
 
 #VERIFY THIS LATER: PATH FOR FILE TO BE OPENED + ITS EXTENSION
@@ -43,6 +45,8 @@ f.close()
 inp = [i.split() for i in inp]
 
 
+
+
 '''
 if labels are entered in format:
     apple:
@@ -53,6 +57,9 @@ if possible.
 Edge case: last statement is a label (instead of halt, which should raise an error later)
 '''
 # inp = [i.split() for i in ['move r1 r2', 'label1:', 'add r1 r2', 'label2:', 'sub r1 r2']]
+inp = [i.split() for i in ['var a', 'var b', 'var c', 'mov r1 r2','label1:', 'add r1 r2', 'label2: sub r3 r4']]
+
+
 labelInds = []
 for i in range(len(inp)):
     if ((len(inp[i])==1) and (inp[i][0][-1]==':')):
@@ -65,6 +72,28 @@ for i in labelInds:
     inp.pop(i)
 
 
+#variable processing
+# checking for var at the begining of inp instructions and storing memory addresses in dictionary
+# also pops out the var lines from imp
+
+
+
+var_count = 0
+variables = {}
+for i in range(len(inp)):
+    if (inp[i][0] == 'var'):
+        var_count += 1
+    else:
+        break
+
+for i in range(var_count):
+    variables[inp[i][1]] = len(inp) - var_count + i
+
+for i in range(var_count):
+    inp.pop(0)
+
+
+
 #dictionary to store labels
 labels = {}
 #loop to add all labels along with their indices into the labels dictionary
@@ -72,7 +101,11 @@ for i in range(len(inp)):
     if (inp[i][0][-1]==':'):
         labels[inp[i][0][:-1]] = i
 
-print(inp)
+
+# print(labels)
+# print(variables)
+# print(inp)
+
 
 
 #Code for errors will be processed here
@@ -181,7 +214,7 @@ def registerHandler(proposedRegister):
         return '-1'
         
 
-    
+
 
 
 
