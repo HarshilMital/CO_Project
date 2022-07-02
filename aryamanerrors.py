@@ -32,30 +32,46 @@ def errors():
 
     #a
     #typos in instruction names or register names
-    for i in range(len(inp)):
-        type = typeFinder(inp[i], opcodes)
-        print(inp[i])
+    for i in range(len(lines)):
+        type = typeFinder(lines[i], opcodes)
+        if (type == '-1'):
+            if errorList[i] == None:
+                    errorList[i] = 'a'
+            continue
+        
         if (type == 'A'):
-            memory[i] = (opcodes[inp[i][0]] + '00' + registerHandler(inp[i][1]) + registerHandler(inp[i][2])+ registerHandler(inp[i][3]))
-
+            if ((registerHandler(lines[i][1])== '-1') or (registerHandler(lines[i][2])=='-1')+ (registerHandler(lines[i][3])=='-1')):
+                if errorList[i] == None:
+                    errorList[i] = 'a'
+            continue
         elif (type == 'B'):
-            memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
+            if ((registerHandler(lines[i][1])=='-1')):
+                if errorList[i] == None:
+                    errorList[i] = 'a'
+            continue
 
         elif(type == 'C'):
-            memory[i] = (opcodes[inp[i][0]] + '00000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
+            if ((registerHandler(lines[i][1])=='-1') or (registerHandler(lines[i][2])=='-1')):
+                if errorList[i] == None:
+                        errorList[i] = 'a'
+            continue
 
         elif (type == 'D'):
-            memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + memaddr_handler(inp[i][2]))
+            if ((registerHandler(lines[i][1])=='-1')):
+                if errorList[i] == None:
+                    errorList[i] = 'a'
+            continue
             
-        elif (type == 'E'):
-            memory[i] = (opcodes[inp[i][0]] + '000' + memaddr_handler(inp[i][1]))
-
-        elif (type == 'F'):
-            memory[i] = (opcodes[inp[i][0]]+'00000000000')
         #Necessary to process mov a movB and movC (instead of 'B' and 'C')
         #because mov has two different opcodes for movB and movC
         #so the opcodes dictionary doesn't contain mov at all, mov had to be done manually
         elif(type=='movB'):
-            memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
+            if ((registerHandler(lines[i][1])=='-1')):
+                if errorList[i] == None:
+                    errorList[i] = 'a'
+            continue
         elif(type=='movC'):
-            memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
+            if ((registerHandler(lines[i][1])=='-1') or (registerHandler(lines[i][1])=='-1')):
+                if errorList[i] == None:
+                    errorList[i] = 'a'
+            continue
