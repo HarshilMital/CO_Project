@@ -37,7 +37,7 @@ def binary(n):
 #VERIFY THIS LATER: PATH FOR FILE TO BE OPENED + ITS EXTENSION
 #Take file 'Run.txt' as input, turns text into a line-by-line list called inp using f.readlines()
 #C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt
-f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
+f = open("Run.txt", 'r')
 inp = f.readlines()
 f.close()
 
@@ -253,7 +253,7 @@ def binary_instruction_memload():
             memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + memaddr_handler(inp[i][2]))
             
         elif (type == 'E'):
-            memory[i] = (opcodes[inp[i][0]] + '000' + memaddr_handler(inp[i][2]))
+            memory[i] = (opcodes[inp[i][0]] + '000' + memaddr_handler(inp[i][1]))
 
         elif (type == 'F'):
             memory[i] = (opcodes[inp[i][0]]+'00000000000')
