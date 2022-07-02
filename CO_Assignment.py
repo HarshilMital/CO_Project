@@ -142,9 +142,9 @@ def typeFinder(rawInstruction, opcodes, lbl = None):
             keyword = rawInstruction[3][0]
         
         if (keyword=='$'):
-            return 'movB'
+            return 'B'
         else:
-            return 'movC'
+            return 'C'
     
 
     #i iterates over all the types, checks if the instruction is of type i, and if yes, returns i
@@ -173,7 +173,7 @@ def immediateHandler(rawInstruction):
     #converts decimal immediate to binary, checks if it's 8 bits and positive, if not, returns '-1'
     #ASSUMES IMMEDIATE IS ASSOCIATED WITH CORRECT TYPE OF INSTRUCTION (WHICH IS B) AND NOT MISMATCHED
 
-    imm = rawInstruction[-1][1:]
+    imm = (rawInstruction[-1]).lstrip('$')
     global error
 
     #if $13.00 is not a valid immediate:
@@ -214,35 +214,47 @@ def registerHandler(proposedRegister):
         error = True
         return '-1'
 
-def Output_funtion():
+# takes label/variable/ and converts it to binary memory address
+
+def memaddr_handler(proposedMem_addr):
+
+    mem = proposedMem_addr
+
+    if mem in labels:
+        mem = binary(labels[mem])
+        return '0' + (8 - len(mem)) + mem
+
+    elif mem in variables:
+        mem = binary(variables[mem])
+        return '0' + (8 - len(mem)) + mem
+
+    return mem
+
+
+
+#converts assembly instructions in inp to binary and loads the binary converted instructions into the memory
+
+def binary_instruction_memload():
     for i in range(len(inp)):
-        Type=typeFinder(i)
-        if (Type=='A'):
-            print(opcodes(i[0]) + '00' + registerHandler(i[1]) 
-            + registerHandler(i[2])+ registerHandler(i[3]))
-        elif (Type=='B'):
-            print(opcodes[i[0]] + registerHandler(i[1]) 
-            + immediateHandler(i[2]))
-        elif(Type=='C'):
-            print(opcodes[i[0]] + '00000' + registerHandler(i[1]) + registerHandler(i[2]))
-        elif(Type=='D'):
-            for j in variables:
-                if j==i[2]:
-                    memory_address=immediateHandler(j)
-            for j in lables:
-                if j==i[2]:
-                    memory_address=immediateHandler(j)
-            print(opcodes[i[0]] + registerHandler(i[1]) + str(memory_address))
-        elif(Type=='E'):
-            for j in variables:
-                if j==i[1]:
-                    memory_address=immediateHandler(j)
-            for j in lables:
-                if j==i[1]:
-                    memory_address=immediateHandler(j)
-            print(opcodes[i[0]]+'000'+ str(memory_address))
-        elif(Type=='F'):
-            print(opcodes[i[0]]+'00000000000')
+        type = typeFinder(i)
+        if (type == 'A'):
+            memory[i] = (opcodes[inp[i][0]] + '00' + registerHandler(inp[i][1]) + registerHandler(inp[i][2])+ registerHandler(inp[i][3]))
+
+        elif (type == 'B'):
+            memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
+
+        elif(type == 'C'):
+            memory[i] = (opcodes[inp[i][0]] + '00000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
+
+        elif (type == 'D'):
+            memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + memaddr_handler(inp[i][2]))
+            
+        elif (type == 'E'):
+            memory[i] = (opcodes[inp[i][0]] + '000' + memaddr_handler(inp[i][2]))
+
+        elif (type == 'F'):
+            memory[i] = (opcodes[inp[i][0]]+'00000000000')
+
         
 
 
