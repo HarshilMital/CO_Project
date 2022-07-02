@@ -74,7 +74,7 @@ for i in labelInds:
 
 #variable processing
 # checking for var at the begining of inp instructions and storing memory addresses in dictionary
-# also pops out the var lines from imp
+# also pops out the var lines from inp
 
 
 
@@ -101,7 +101,8 @@ for i in range(len(inp)):
     if (inp[i][0][-1]==':'):
         labels[inp[i][0][:-1]] = i
         inp[i].pop(0)
-
+#NOTE: If the last line is label (instead of halt), this will leave an empty string at the last index of inp 
+#(i.e. [['move', 'r1', 'r2'], ['add', 'r1', 'r2'], ['sub', 'r1', 'r2'], []])
 
 # print(labels)
 # print(variables)
@@ -142,9 +143,9 @@ def typeFinder(rawInstruction, opcodes, lbl = None):
             keyword = rawInstruction[3][0]
         
         if (keyword=='$'):
-            return 'B'
+            return 'movB'
         else:
-            return 'C'
+            return 'movC'
     
 
     #i iterates over all the types, checks if the instruction is of type i, and if yes, returns i
@@ -222,11 +223,11 @@ def memaddr_handler(proposedMem_addr):
 
     if mem in labels:
         mem = binary(labels[mem])
-        return '0' + (8 - len(mem)) + mem
+        return '0'*(8 - len(mem)) + mem
 
     elif mem in variables:
         mem = binary(variables[mem])
-        return '0' + (8 - len(mem)) + mem
+        return '0'*(8 - len(mem)) + mem
 
     return mem
 
@@ -254,6 +255,14 @@ def binary_instruction_memload():
 
         elif (type == 'F'):
             memory[i] = (opcodes[inp[i][0]]+'00000000000')
+        #Necessary to process mov a movB and movC (instead of 'B' and 'C')
+        #because mov has two different opcodes for movB and movC
+        #so the opcodes dictionary doesn't contain mov at all, mov had to be done manually
+        elif(Type=='movB'):
+            memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(i[2]))
+        elif(Type=='movC'):
+            memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(i[2]))
+        
 
         
 
