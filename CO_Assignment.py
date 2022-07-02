@@ -155,8 +155,7 @@ def typeFinder(rawInstruction, opcodes, lbl = None):
             return i
     
     #if by this point in this function, return hasn't been executed, it implies an error. If the error happened up 
-    global error
-    error = True
+    return '-1'
 
 #COME BACK TO THIS FOR SIMULATOR
 # def flagsHandler(semantic, newVal):
