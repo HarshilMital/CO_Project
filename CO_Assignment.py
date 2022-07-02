@@ -211,8 +211,6 @@ def registerHandler(proposedRegister):
     if proposedRegister in regAddress:
         return regAddress[proposedRegister]
     else:
-        global error
-        error = True
         return '-1'
 
 # takes label/variable/ and converts it to binary memory address
