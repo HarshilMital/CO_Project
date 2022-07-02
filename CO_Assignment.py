@@ -20,7 +20,7 @@ types = {'A':['add', 'sub', 'mul', 'xor', 'or', 'and'], 'B':['rs', 'ls'], 'C':['
 #8 registers, r0 to r7 (r7 being FLAGS), each denoted by its index
 #each register stores 2 bytes, i.e. 16 bits
 registers = ['0000000000000000' for i in range(8)]
-regAddress = {'reg0':'000',' reg1':'001', 'reg2':'010', 'reg3':'011', 'reg4':'100', 'reg5':'101', 'reg6':'110', 'FLAGS':'111'}
+regAddress = {'R0':'000','R1':'001', 'R2':'010', 'R3':'011', 'R4':'100', 'R5':'101', 'R6':'110', 'FLAGS':'111'}
 
 
 #512 byte memory, 256 address, two bytes each
@@ -36,7 +36,8 @@ def binary(n):
 
 #VERIFY THIS LATER: PATH FOR FILE TO BE OPENED + ITS EXTENSION
 #Take file 'Run.txt' as input, turns text into a line-by-line list called inp using f.readlines()
-f = open("Run.txt", 'r')
+#C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt
+f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
 inp = f.readlines()
 f.close()
 
@@ -237,7 +238,8 @@ def memaddr_handler(proposedMem_addr):
 
 def binary_instruction_memload():
     for i in range(len(inp)):
-        type = typeFinder(i)
+        type = typeFinder(inp[i], opcodes)
+        print(inp[i])
         if (type == 'A'):
             memory[i] = (opcodes[inp[i][0]] + '00' + registerHandler(inp[i][1]) + registerHandler(inp[i][2])+ registerHandler(inp[i][3]))
 
@@ -258,14 +260,13 @@ def binary_instruction_memload():
         #Necessary to process mov a movB and movC (instead of 'B' and 'C')
         #because mov has two different opcodes for movB and movC
         #so the opcodes dictionary doesn't contain mov at all, mov had to be done manually
-        elif(Type=='movB'):
-            memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(i[2]))
-        elif(Type=='movC'):
-            memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(i[2]))
+        elif(type=='movB'):
+            memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
+        elif(type=='movC'):
+            memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
         
-
-        
-
+binary_instruction_memload()
+[print(i) for i in memory]
 
 
 
