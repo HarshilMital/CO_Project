@@ -242,7 +242,6 @@ def memaddr_handler(proposedMem_addr):
 def binary_instruction_memload():
     for i in range(len(inp)):
         type = typeFinder(inp[i], opcodes)
-        print(inp[i])
         if (type == 'A'):
             memory[i] = (opcodes[inp[i][0]] + '00' + registerHandler(inp[i][1]) + registerHandler(inp[i][2])+ registerHandler(inp[i][3]))
 
