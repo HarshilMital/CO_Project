@@ -1,5 +1,5 @@
 import CO_Assignment
-#d e i
+#a d e
 
 def errors():
     inp_file = open('Run.txt', 'r')
@@ -26,7 +26,7 @@ def errors():
     #e
     #Illegal Immediate values (more than 8 bits)
     for i in range(len(lines)):
-        if immediateHandler(lines[m])=='-1':
+        if ((immediateHandler(lines[m])=='-1') or (immediateHandler(lines[m])=='-2')):
             if errorList[i] == None:
                     errorList[i] = 'e'
 
@@ -61,10 +61,7 @@ def errors():
                 if errorList[i] == None:
                     errorList[i] = 'a'
             continue
-            
-        #Necessary to process mov a movB and movC (instead of 'B' and 'C')
-        #because mov has two different opcodes for movB and movC
-        #so the opcodes dictionary doesn't contain mov at all, mov had to be done manually
+
         elif(type=='movB'):
             if ((registerHandler(lines[i][1])=='-1')):
                 if errorList[i] == None:
@@ -75,3 +72,38 @@ def errors():
                 if errorList[i] == None:
                     errorList[i] = 'a'
             continue
+
+
+    #Too many/few arguments + Incorrect arguments
+    for i in range(len(lines)):
+        type = typeFinder(lines[i], opcodes)
+        length = len(lines[i])
+        if (type == 'A'):
+            if length != 4:
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif (type == 'B' or type=='movB'):
+            if length != 3:
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif(type == 'C' or type=='movC'):
+            if length != 3:
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif (type == 'D'):
+            if length != 3:
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+            
+        elif (type == 'E'):
+            if length != 2:
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif (type == 'F'):
+            if length != 2:
+                if errorList[i] == None:
+                    errorList[i] = 'gse'

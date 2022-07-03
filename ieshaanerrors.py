@@ -39,11 +39,19 @@ def errors():
                 #incorrect usage of syntax
                 num = 0
             if ((inp[m][num] == 'jmp') or (inp[m][num] == 'jlt') or (inp[m][num] == 'jgt') or (inp[m][num] == 'je')):
-                if lines[m][num+1] not in labels:
+                if inp[m][num+1] not in labels:
                     #error = True
-                    if lines[m][num+1] in variables:
+                    if inp[m][num+1] in variables:
                         if errorList[m]==None:
                             errorList[m]='f'
                     else:
                         if errorList[m]==None:
                             errorList[m]='a'
+    
+    def Label_ke_baad_label():
+        for m in range(len(lines)):
+            if (lines[m][0][-1] == ":"):
+                num = 1
+                if ((lines[m][1][-1] == ':')):
+                     if errorList[m]==None:
+                            errorList[m]='gse'

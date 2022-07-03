@@ -174,6 +174,9 @@ def immediateHandler(rawInstruction):
     #converts decimal immediate to binary, checks if it's 8 bits and positive, if not, returns '-1'
     #ASSUMES IMMEDIATE IS ASSOCIATED WITH CORRECT TYPE OF INSTRUCTION (WHICH IS B) AND NOT MISMATCHED
 
+    if (rawInstruction[-1][0]!='$'):
+        return '-2'
+
     imm = (rawInstruction[-1]).lstrip('$')
     global error
 
@@ -183,7 +186,10 @@ def immediateHandler(rawInstruction):
         error = True
         return '-1'
     
-    binVal = binary(imm)
+    try:
+        binVal = binary(imm)
+    except:
+        return '-2'
     length = len(binVal)
     if (length>8):
         error = True
@@ -208,6 +214,9 @@ def registerHandler(proposedRegister):
         #     curType = typeFinder(rawInstruction, opcodes, 0)
         #     #called typeFinder with lbl = 0 for optimization purposes, since now it won't have to fruitlessly run labelChecker script
 
+    if proposedRegister[0]=='$':
+        return '-2'
+    
     if proposedRegister in regAddress:
         return regAddress[proposedRegister]
     else:
@@ -236,7 +245,6 @@ def memaddr_handler(proposedMem_addr):
 def binary_instruction_memload():
     for i in range(len(inp)):
         type = typeFinder(inp[i], opcodes)
-        print(inp[i])
         if (type == 'A'):
             memory[i] = (opcodes[inp[i][0]] + '00' + registerHandler(inp[i][1]) + registerHandler(inp[i][2])+ registerHandler(inp[i][3]))
 
