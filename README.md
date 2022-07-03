@@ -1,9 +1,7 @@
 # CO_Project
-Computer Organization Project (Assembler &amp; Simulator)
-TODO
-- too many & too few arguments (DONE)
-- general syntax errors (kuchh bhi bahardiya agar) ["garbage shit"]
-- incorrect arguments (DONE)
-- label ke baad label (potentially)
+Computer Organization Project (Assembler & Simulator)
 
-Error string: 'gse'
+Team Members:
+    Ieshaan Awasthy (2021054)
+    Harshil Mital (2021050)
+    Aryaman Trivedi (2021022)
