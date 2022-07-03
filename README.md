@@ -5,3 +5,5 @@ TODO
 - general syntax errors (kuchh bhi bahardiya agar) ["garbage shit"]
 - incorrect arguments
 - label ke baad label (potentially)
+
+Error string: 'gsa'
