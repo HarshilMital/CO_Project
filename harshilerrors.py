@@ -1,4 +1,4 @@
-#a g h
+#a g h gensyntax
 
 
 inp_file = open('Run.txt', 'r')
@@ -15,37 +15,6 @@ hlt_flag = False
 
 
 for i in range(len(lines)):
-    #  # checking for typos in instructions (other than lables)
-    # if lines[i][0] not in ['add', 'sub', 'ld', 'st', 'mul', 'div', 'rs', 'ls', 'xor', 'or', 'and', 'not', 'cmp', 'jmp', 'jlt', 'jgt', 'je', 'hlt', 'mov', 'var']:
-    #     if lines[i][0][:-1] not in labels:
-    #         if errorList[i] == None:
-    #             errorList[i] == 'a'
-    # # checking for typos in registers
-    # else:
-    #     # also gonna have to account for presence of label and var 
-    #     type = typeFinder(lines[i], opcodes)
-    #     if (type == 'A'):
-    #         if (lines[i][1] not in regAddress) or (lines[i][2] not in regAddress) or (lines[i][3] not in regAddress):
-    #             if errorList[i] == None:
-    #                 errorList[i] == 'a'
-
-    #     elif (type == 'B'):
-    #         memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
-
-    #     elif(type == 'C'):
-    #         memory[i] = (opcodes[inp[i][0]] + '00000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
-
-    #     elif (type == 'D'):
-    #         memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + memaddr_handler(inp[i][2]))
-            
-    #     elif (type == 'E'):
-    #         memory[i] = (opcodes[inp[i][0]] + '000' + memaddr_handler(inp[i][1]))
-
-    #     elif (type == 'F'):
-    #         memory[i] = (opcodes[inp[i][0]]+'00000000000')
-
-        #g
-        #just checks if var statement is present outside the inital block of var declaration
         if (lines[i][0] == 'var') and (i > var_count):
             if errorList[i] == None:
                 errorList[i] == 'g'
@@ -64,6 +33,17 @@ for i in range(len(lines)):
             if (lines[i][0] == 'hlt') or (lines[i][0][-1] ==':' and lines[i][1] == 'hlt'):
                 if errorList[i] == None:
                     errorList[i] == 'i'
+
+        #general syntax error for the case of anything
+        #  check if all the words present in the keywords list or occurs after var or a label(not neccesarily valid)
+        # or $integer 
+        keywords = ['add', 'sub', 'ld', 'st', 'mul', 'div', 'rs', 'ls', 'xor', 'or', 'and', 'not', 'cmp', 'jmp', 'jlt', 'jgt', 'je', 'hlt', 'mov', 'var', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R0', 'FLAGS']
+
+        for i in range(len(lines)):
+            for j in lines[i]:
+                if (j not in keywords) and (j[-1] != ':') and (lines[i][lines[i].index(j) - 1] != 'var') and (j[0] != '$'):
+                    if errorList[i] == None:
+                        errorList[i] == 'gse'
 
         
 
