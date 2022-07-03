@@ -231,9 +231,10 @@ for i in range(len(lines)):
 
 lines = [i.split() for i in lines]
 errorList = [None for i in range(256)]
-import aryamanerrors.py
-import harshilerrors.py
-import ieshaanerrors.py
+
+from aryamanerrors import errors1
+from harshilerrors import errors2
+from ieshaanerrors import errors3
 
 errors1()
 errors2()
