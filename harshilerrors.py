@@ -61,7 +61,7 @@ for i in range(len(lines)):
         #i
 
         if (i == len(lines) - 1):
-            if (lines[i][0] == 'hlt') or (lines[i][0][:-1] in labels and lines[i][1] == 'hlt'):
+            if (lines[i][0] == 'hlt') or (lines[i][0][-1] ==':' and lines[i][1] == 'hlt'):
                 if errorList[i] == None:
                     errorList[i] == 'i'
 
