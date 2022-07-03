@@ -1,7 +1,3 @@
-import aryamanerrors.py
-import harshilerrors.py
-import ieshaanerrors.py
-
 #Dictionary of all Instructions + OpCodes, sans move
 opcodes =  {'add':'10000', 'sub':'10001', 'ld':'10100', 'st':'10101', 'mul':'10110', 'div':'10111', 'rs':'11000', 'ls':'11001', 'xor':'11010', 'or':'11011', 'and':'11100', 'not':'11101', 'cmp':'11110', 'jmp':'11111', 'jlt':'01100', 'jgt':'01101', 'je':'01111', 'hlt':'01010'}
 types = {'A':['add', 'sub', 'mul', 'xor', 'or', 'and'], 'B':['rs', 'ls'], 'C':['div', 'not', 'cmp'], 'D':['ld','st'], 'E':['jmp', 'jlt', 'jgt', 'je'], 'F':['hlt']}
@@ -235,6 +231,9 @@ for i in range(len(lines)):
 
 lines = [i.split() for i in lines]
 errorList = [None for i in range(256)]
+import aryamanerrors.py
+import harshilerrors.py
+import ieshaanerrors.py
 
 errors1()
 errors2()
