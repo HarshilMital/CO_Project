@@ -174,6 +174,9 @@ def immediateHandler(rawInstruction):
     #converts decimal immediate to binary, checks if it's 8 bits and positive, if not, returns '-1'
     #ASSUMES IMMEDIATE IS ASSOCIATED WITH CORRECT TYPE OF INSTRUCTION (WHICH IS B) AND NOT MISMATCHED
 
+    if (rawInstruction[-1][0]!='$'):
+        return '-2'
+
     imm = (rawInstruction[-1]).lstrip('$')
     global error
 
@@ -208,6 +211,9 @@ def registerHandler(proposedRegister):
         #     curType = typeFinder(rawInstruction, opcodes, 0)
         #     #called typeFinder with lbl = 0 for optimization purposes, since now it won't have to fruitlessly run labelChecker script
 
+    if proposedRegister[0]=='$':
+        return '-2'
+    
     if proposedRegister in regAddress:
         return regAddress[proposedRegister]
     else:
