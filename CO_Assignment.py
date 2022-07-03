@@ -186,7 +186,10 @@ def immediateHandler(rawInstruction):
         error = True
         return '-1'
     
-    binVal = binary(imm)
+    try:
+        binVal = binary(imm)
+    except:
+        return '-2'
     length = len(binVal)
     if (length>8):
         error = True
