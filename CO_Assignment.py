@@ -23,7 +23,7 @@ def binary(n):
 #VERIFY THIS LATER: PATH FOR FILE TO BE OPENED + ITS EXTENSION
 #Take file 'Run.txt' as input, turns text into a line-by-line list called inp using f.readlines()
 #C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt
-f = open("Run.txt", 'r')
+f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
 inp = f.readlines()
 f.close()
 
@@ -161,7 +161,7 @@ def immediateHandler(rawInstruction):
     #ASSUMES IMMEDIATE IS ASSOCIATED WITH CORRECT TYPE OF INSTRUCTION (WHICH IS B) AND NOT MISMATCHED
 
     if (rawInstruction[-1][0]!='$'):
-        return '-2'
+        return '-2Dollar'
 
     imm = (rawInstruction[-1]).lstrip('$')
     global error
@@ -175,7 +175,7 @@ def immediateHandler(rawInstruction):
     try:
         binVal = binary(imm)
     except:
-        return '-2'
+        return '-2notNum'
     length = len(binVal)
     if (length>8):
         error = True
@@ -201,7 +201,7 @@ def registerHandler(proposedRegister):
         #     #called typeFinder with lbl = 0 for optimization purposes, since now it won't have to fruitlessly run labelChecker script
 
     if proposedRegister[0]=='$':
-        return '-2'
+        return '-2dollaR'
     
     if proposedRegister in regAddress:
         return regAddress[proposedRegister]
@@ -224,17 +224,205 @@ def memaddr_handler(proposedMem_addr):
 
     return mem
 
-inp_file = open('Run.txt', 'r')
+inp_file = open('C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt', 'r')
 lines = inp_file.readlines()
-for i in range(len(lines)):
+inp_file.close()
+for i in (lines):
     i.rstrip('\n')
 
 lines = [i.split() for i in lines]
 errorList = [None for i in range(256)]
 
-from aryamanerrors import errors1
-from harshilerrors import errors2
-from ieshaanerrors import errors3
+def errors1():
+    global lines
+    global errorList
+
+    #Too many/few arguments + Incorrect arguments
+    for i in range(len(lines)):
+        lbl = labelChecker(lines[i])
+        type = typeFinder(lines[i], opcodes)
+        length = len(lines[i]) - lbl
+        if (type == 'A'):
+            if length != 4:
+
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif (type == 'B' or type=='movB'):
+            if length != 3:
+
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif(type == 'C' or type=='movC'):
+            if length != 3:
+
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif (type == 'D'):
+            if length != 3:
+
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+            
+        elif (type == 'E'):
+            if length != 2:
+
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+        elif (type == 'F'):
+            if length != 1:
+
+                if errorList[i] == None:
+                    errorList[i] = 'gse'
+
+    #a
+    #typos in instruction names or register names
+    for i in range(len(lines)):
+        if errorList[i] == None:
+            if lines[i][0] == 'var':
+                continue
+            type = typeFinder(lines[i], opcodes)
+            if (type == '-1'):
+                errorList[i] = 'a'
+                continue
+            lbl = labelChecker(lines[i])
+            
+            if (type == 'A'):
+                if ((registerHandler(lines[i][lbl+1])== '-1') or (registerHandler(lines[i][lbl+2])=='-1')+ (registerHandler(lines[i][lbl+3])=='-1')):
+                    errorList[i] = 'a'
+                continue
+            elif (type == 'B'):
+                if ((registerHandler(lines[i][lbl+1])=='-1')):
+                    errorList[i] = 'a'
+                continue
+
+            elif(type == 'C'):
+                if ((registerHandler(lines[i][lbl+1])=='-1') or (registerHandler(lines[i][lbl+2])=='-1')):
+                    errorList[i] = 'a'
+                continue
+            
+            elif (type == 'D'):
+                if ((registerHandler(lines[i][lbl+1])=='-1')):
+                    errorList[i] = 'a'
+                continue
+            
+            elif(type=='movB'):
+                if ((registerHandler(lines[i][lbl+1])=='-1')):
+                    errorList[i] = 'a'
+                continue
+            elif(type=='movC'):
+                if ((registerHandler(lines[i][lbl+1])=='-1') or (registerHandler(lines[i][lbl+1])=='-1')):
+                    errorList[i] = 'a'
+                continue
+            
+    
+    #d
+    #Illegal use of FLAGS register
+    for i in range(len(lines)):
+        if errorList[i] == None:
+            if 'FLAGS' in lines[i]:
+                curLine = lines[i]
+                if (curLine[0][-1] == ':'):
+                    #if label is present at beginning of instruction
+                    curLine = curLine[1:]
+                if curLine[0] != 'mov':
+                    errorList[i] = 'd'
+
+    #e
+    #Illegal Immediate values (more than 8 bits)
+    for i in range(len(lines)):
+        if errorList[i] == None:
+            type = typeFinder(lines[i], opcodes)
+            if (type == 'B'):
+                if ((immediateHandler(lines[i])=='-1') or (immediateHandler(lines[i])=='-2')):
+                    if errorList[i] == None:
+                            errorList[i] = 'e'
+
+def errors2():
+    global lines
+    global errorList
+    hlt_flag = False
+
+
+    for i in range(len(lines)):
+        if errorList[i] == None:
+            #g
+            #just checks if var statement is present outside the inital block of var declaration
+            if (lines[i][0] == 'var') and (i > var_count):
+                errorList[i] == 'g'
+
+            #h
+            if (lines[i][0] == 'hlt'):
+                hlt_flag = True
+
+            if (i == len(lines) - 1) and not (hlt_flag):
+                errorList[i] == 'h'
+
+            #i
+
+            if (i == len(lines) - 1):
+                if (lines[i][0] == 'hlt') or (lines[i][0][-1] ==':' and lines[i][1] == 'hlt'):
+                    errorList[i] == 'i'
+
+            
+
+            #general syntax error for the case of anything
+            # check if all the words present in the keywords list or occurs after var or a label(not neccesarily valid)
+            # or $integer 
+
+            keywords = ['add', 'sub', 'ld', 'st', 'mul', 'div', 'rs', 'ls', 'xor', 'or', 'and', 'not', 'cmp', 'jmp', 'jlt', 'jgt', 'je', 'hlt', 'mov', 'var', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R0', 'FLAGS'] 
+
+            for j in lines[i]:
+                if (j not in keywords) and (j[-1] != ':') and (lines[i][lines[i].index(j) - 1] != 'var') and (j[0] != '$'):
+                    errorList[i] == 'gse'
+
+def errors3():
+
+    global lines
+    global errorList
+
+    #b
+    
+    for m in range(len(lines)):
+        if errorList[m] == None:
+            if (lines[m][0]=='var'): #for variables not present in the starting of the code
+                if m+1>var_count:
+                    errorList[m]='g'
+                    #print("variable not declared in the beg")
+            num = labelChecker(lines[m])
+            if ((lines[m][num] == 'ld') or (lines[m][num] == 'st')):
+                if lines[m][num+2] not in variables:
+                    #error = True
+                    if lines[m][num+2] in labels:
+                        errorList[m]='f'
+                    else:
+                        errorList[m]='b'
+    #c
+
+    for m in range(len(lines)):
+        if errorList[m] == None:
+            if (lines[m][0][-1] == ":"):
+                num = 1
+            else:
+                #incorrect usage of syntax
+                num = 0
+            if ((lines[m][num] == 'jmp') or (lines[m][num] == 'jlt') or (lines[m][num] == 'jgt') or (lines[m][num] == 'je')):
+                if lines[m][num+1] not in labels:
+                    #error = True
+                    if lines[m][num+1] in variables:
+                        errorList[m]='f'
+                    else:
+                        errorList[m]='c'
+        
+        for m in range(len(lines)):
+            if errorList[m]==None:
+                if (lines[m][0][-1] == ":"):
+                    num = 1
+                    if ((lines[m][1][-1] == ':')):
+                        errorList[m]='gse'
 
 errors1()
 errors2()
@@ -276,7 +464,7 @@ def binary_instruction_memload():
             memory[i] = (opcodes[inp[i][0]] + '00' + registerHandler(inp[i][1]) + registerHandler(inp[i][2])+ registerHandler(inp[i][3]))
 
         elif (type == 'B'):
-            memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
+            memory[i] = (opcodes[inp[i][0]] + registerHandler(inp[i][1]) + immediateHandler(inp[i]))
 
         elif(type == 'C'):
             memory[i] = (opcodes[inp[i][0]] + '00000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
@@ -293,7 +481,7 @@ def binary_instruction_memload():
         #because mov has two different opcodes for movB and movC
         #so the opcodes dictionary doesn't contain mov at all, mov had to be done manually
         elif(type=='movB'):
-            memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(inp[i][2]))
+            memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(inp[i]))
         elif(type=='movC'):
             memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
         

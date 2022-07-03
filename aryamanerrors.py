@@ -2,10 +2,6 @@ import CO_Assignment
 #a d e
 
 def errors1():
-    inp_file = open('Run.txt', 'r')
-    lines = inp_file.readlines()
-    for i in range(len(lines)):
-        i.rstrip('\n')
 
     global lines
     global errorList
