@@ -1,16 +1,6 @@
-'''
----GENERAL NOTES---
-*ERRORS*
-- Error case: last statement is a label instead of halt. KEEP IN MIND: THE LABEL CAN POINT TO HALT, I.E. LABEL1: HLT IS VALID
-- General Syntaxt Error Case: More arguments entered than taken by the said instruction type
-- General Syntaxt Error Case: Incorrect arguments for certain type of instruction
-- input immediate is out of range (read immediate handler)
-
-*OPTIMIZATIONS*
-- Currently, this code, when it encounters a label which isn't inline w the following instruction, pops it, inserts it before the next line, and then stores its corresponding memory address 
-    -> This could be optimized by simply popping the label out from the very beginning, and just storing its memory address.
-    ++ Since this would allow the remainder of the code to skip a lot of arbitrary checks
-'''
+import aryamanerrors.py
+import harshilerrors.py
+import ieshaanerrors.py
 
 #Dictionary of all Instructions + OpCodes, sans move
 opcodes =  {'add':'10000', 'sub':'10001', 'ld':'10100', 'st':'10101', 'mul':'10110', 'div':'10111', 'rs':'11000', 'ls':'11001', 'xor':'11010', 'or':'11011', 'and':'11100', 'not':'11101', 'cmp':'11110', 'jmp':'11111', 'jlt':'01100', 'jgt':'01101', 'je':'01111', 'hlt':'01010'}
@@ -238,10 +228,47 @@ def memaddr_handler(proposedMem_addr):
 
     return mem
 
+inp_file = open('Run.txt', 'r')
+lines = inp_file.readlines()
+for i in range(len(lines)):
+    i.rstrip('\n')
 
+lines = [i.split() for i in lines]
+errorList = [None for i in range(256)]
+
+errors1()
+errors2()
+errors3()
+
+for i in errorList:
+    if i!=None:
+        error = True
+
+def errorPrint():
+    for i in range(len(errorList)):
+        if errorList[i]!=None:
+            if errorList[i] == 'a':
+                print(f"Error (line {i+1}): Typos in instruction name or register name")
+            if errorList[i] == 'b':
+                print(f"Error (line {i+1}): Use of undefined variables")
+            if errorList[i] == 'c':
+                print(f"Error (line {i+1}): Use of undefined labels")
+            if errorList[i] == 'd':
+                print(f"Error (line {i+1}): Illegal use of FLAGS register")
+            if errorList[i] == 'e':
+                print(f"Error (line {i+1}): Illegal Immediate values (more than 8 bits)")
+            if errorList[i] == 'f':
+                print(f"Error (line {i+1}): Misuse of labels as variables or vice-versa")
+            if errorList[i] == 'g':
+                print(f"Error (line {i+1}): Variables not declared at the beginning")
+            if errorList[i] == 'h':
+                print(f"Error (line {i+1}): Missing hlt instruction")
+            if errorList[i] == 'i':
+                print(f"Error (line {i+1}): hlt not being used as the last instruction")
+            if errorList[i] == 'gse':
+                print(f"Error (line {i+1}): General Syntax Error")
 
 #converts assembly instructions in inp to binary and loads the binary converted instructions into the memory
-
 def binary_instruction_memload():
     for i in range(len(inp)):
         type = typeFinder(inp[i], opcodes)
@@ -270,8 +297,11 @@ def binary_instruction_memload():
         elif(type=='movC'):
             memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
         
-binary_instruction_memload()
-[print(i) for i in memory]
+if error:
+    errorPrint()
+else:
+    binary_instruction_memload()
+    [print(i) for i in memory]
 
 
 

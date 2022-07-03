@@ -1,13 +1,9 @@
 #b c f
 import CO_Assignment
-def errors():
-    inp_file = open('Run.txt', 'r')
-    lines = inp_file.readlines()
-    for i in range(len(lines)):
-        i.rstrip('\n')
+def errors3():
 
-    lines = [i.split() for i in lines]
-    errorList = [None for i in range(256)]
+    global lines
+    global errorList
 
     #b
     def Error_handling_variables():
