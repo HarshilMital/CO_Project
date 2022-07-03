@@ -1,34 +1,14 @@
 import CO_Assignment
 #a d e
 
-def errors():
+def errors1():
     inp_file = open('Run.txt', 'r')
     lines = inp_file.readlines()
     for i in range(len(lines)):
         i.rstrip('\n')
 
-    lines = [i.split() for i in lines]
-    errorList = [None for i in range(256)]
-
-    
-    #d
-    #Illegal use of FLAGS register
-    for i in range(len(lines)):
-        if 'FLAGS' in lines[i]:
-            curLine = lines[i]
-            if (curLine[0][-1] == ':'):
-                #if label is present at beginning of instruction
-                curLine = curLine[1:]
-            if curLine[0] != 'mov':
-                if errorList[i] == None:
-                    errorList[i] = 'd'
-
-    #e
-    #Illegal Immediate values (more than 8 bits)
-    for i in range(len(lines)):
-        if ((immediateHandler(lines[m])=='-1') or (immediateHandler(lines[m])=='-2')):
-            if errorList[i] == None:
-                    errorList[i] = 'e'
+    global lines
+    global errorList
 
     #a
     #typos in instruction names or register names
@@ -72,7 +52,25 @@ def errors():
                 if errorList[i] == None:
                     errorList[i] = 'a'
             continue
+    
+    #d
+    #Illegal use of FLAGS register
+    for i in range(len(lines)):
+        if 'FLAGS' in lines[i]:
+            curLine = lines[i]
+            if (curLine[0][-1] == ':'):
+                #if label is present at beginning of instruction
+                curLine = curLine[1:]
+            if curLine[0] != 'mov':
+                if errorList[i] == None:
+                    errorList[i] = 'd'
 
+    #e
+    #Illegal Immediate values (more than 8 bits)
+    for i in range(len(lines)):
+        if ((immediateHandler(lines[m])=='-1') or (immediateHandler(lines[m])=='-2')):
+            if errorList[i] == None:
+                    errorList[i] = 'e'
 
     #Too many/few arguments + Incorrect arguments
     for i in range(len(lines)):
