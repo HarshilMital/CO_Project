@@ -1,3 +1,6 @@
+import sys 
+
+
 #Dictionary of all Instructions + OpCodes, sans move
 opcodes =  {'add':'10000', 'sub':'10001', 'ld':'10100', 'st':'10101', 'mul':'10110', 'div':'10111', 'rs':'11000', 'ls':'11001', 'xor':'11010', 'or':'11011', 'and':'11100', 'not':'11101', 'cmp':'11110', 'jmp':'11111', 'jlt':'01100', 'jgt':'01101', 'je':'01111', 'hlt':'01010'}
 types = {'A':['add', 'sub', 'mul', 'xor', 'or', 'and'], 'B':['rs', 'ls'], 'C':['div', 'not', 'cmp'], 'D':['ld','st'], 'E':['jmp', 'jlt', 'jgt', 'je'], 'F':['hlt']}
@@ -23,9 +26,11 @@ def binary(n):
 #VERIFY THIS LATER: PATH FOR FILE TO BE OPENED + ITS EXTENSION
 #Take file 'Run.txt' as input, turns text into a line-by-line list called inp using f.readlines()
 #C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt
-f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
-inp = f.readlines()
-f.close()
+
+inp_file = sys.stdin.readlines()
+inp  = [line.rstrip() for line in inp_file]
+# print(inp)
+
 
 
 #split each string in inp into a list. Make inp a list of lists
@@ -116,7 +121,11 @@ def typeFinder(rawInstruction, opcodes, lbl = None):
     if lbl == None:
         lbl = labelChecker(rawInstruction)
     #lbl = 1: 0th item in rawInstruction is a label, which needs to be ignored; else lbl = 0
-    instruction = rawInstruction[lbl]    
+    try:
+        instruction = rawInstruction[lbl]
+
+    except:
+        return '-1'    
 
     #THIS CODE IS CURRENTLY CONFIGURED TO NOT BE CASE SENSITIVE
     instruction = instruction.lower()
@@ -224,9 +233,9 @@ def memaddr_handler(proposedMem_addr):
 
     return mem
 
-inp_file = open('C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt', 'r')
-lines = inp_file.readlines()
-inp_file.close()
+# inp_file = sys.stdin.readlines()
+inp_file  = [line.rstrip() for line in inp_file]
+lines = inp_file
 for i in (lines):
     i.rstrip('\n')
 
@@ -432,6 +441,8 @@ for i in errorList:
     if i!=None:
         error = True
 
+# print(errorList)
+
 def errorPrint():
     for i in range(len(errorList)):
         if errorList[i]!=None:
@@ -489,35 +500,8 @@ if error:
     errorPrint()
 else:
     binary_instruction_memload()
-    [print(i) for i in memory]
-
-
-
-
-
-
-
-
-    
-
-    
-    
-    
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-
-            
-
-
-        
-
+    # [print(i) for i in memory]
+    for i in memory:
+        if i == '0000000000000000':
+            break
+        print(i)
