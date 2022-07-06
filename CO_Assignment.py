@@ -326,6 +326,40 @@ def errors1():
                 if ((registerHandler(lines[i][lbl+1])=='-1') or (registerHandler(lines[i][lbl+1])=='-1')):
                     errorList[i] = 'a'
                 continue
+
+    #b
+    
+    for m in range(len(lines)):
+        if errorList[m] == None:
+            if (lines[m][0]=='var'): #for variables not present in the starting of the code
+                if m+1>var_count:
+                    errorList[m]='g'
+                    #print("variable not declared in the beg")
+            num = labelChecker(lines[m])
+            if ((lines[m][num] == 'ld') or (lines[m][num] == 'st')):
+                if lines[m][num+2] not in variables:
+                    #error = True
+                    if lines[m][num+2] in labels:
+                        errorList[m]='f'
+                    else:
+                        errorList[m]='b'
+
+    #c
+
+    for m in range(len(lines)):
+        if errorList[m] == None:
+            if (lines[m][0][-1] == ":"):
+                num = 1
+            else:
+                #incorrect usage of syntax
+                num = 0
+            if ((lines[m][num] == 'jmp') or (lines[m][num] == 'jlt') or (lines[m][num] == 'jgt') or (lines[m][num] == 'je')):
+                if lines[m][num+1] not in labels:
+                    #error = True
+                    if lines[m][num+1] in variables:
+                        errorList[m]='f'
+                    else:
+                        errorList[m]='c'
             
     
     #d
@@ -396,45 +430,12 @@ def errors3():
     global lines
     global errorList
 
-    #b
-    
     for m in range(len(lines)):
-        if errorList[m] == None:
-            if (lines[m][0]=='var'): #for variables not present in the starting of the code
-                if m+1>var_count:
-                    errorList[m]='g'
-                    #print("variable not declared in the beg")
-            num = labelChecker(lines[m])
-            if ((lines[m][num] == 'ld') or (lines[m][num] == 'st')):
-                if lines[m][num+2] not in variables:
-                    #error = True
-                    if lines[m][num+2] in labels:
-                        errorList[m]='f'
-                    else:
-                        errorList[m]='b'
-    #c
-
-    for m in range(len(lines)):
-        if errorList[m] == None:
+        if errorList[m]==None:
             if (lines[m][0][-1] == ":"):
                 num = 1
-            else:
-                #incorrect usage of syntax
-                num = 0
-            if ((lines[m][num] == 'jmp') or (lines[m][num] == 'jlt') or (lines[m][num] == 'jgt') or (lines[m][num] == 'je')):
-                if lines[m][num+1] not in labels:
-                    #error = True
-                    if lines[m][num+1] in variables:
-                        errorList[m]='f'
-                    else:
-                        errorList[m]='c'
-        
-        for m in range(len(lines)):
-            if errorList[m]==None:
-                if (lines[m][0][-1] == ":"):
-                    num = 1
-                    if ((lines[m][1][-1] == ':')):
-                        errorList[m]='gse'
+                if ((lines[m][1][-1] == ':')):
+                    errorList[m]='gse'
 
 errors1()
 errors2()
