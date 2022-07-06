@@ -244,7 +244,7 @@ errorList = [None for i in range(256)]
 
 def errors1():
     global lines
-    global errorList
+    # global errorList
 
     #Too many/few arguments + Incorrect arguments
     for i in range(len(lines)):
@@ -351,8 +351,8 @@ def errors1():
                             errorList[i] = 'e'
 
 def errors2():
-    global lines
-    global errorList
+    # global lines
+    # global errorList
     hlt_flag = False
 
 
@@ -361,20 +361,22 @@ def errors2():
             #g
             #just checks if var statement is present outside the inital block of var declaration
             if (lines[i][0] == 'var') and (i > var_count):
-                errorList[i] == 'g'
+                errorList[i] = 'g'
 
             #h
-            if (lines[i][0] == 'hlt'):
+            if ('hlt' in lines[i]):
                 hlt_flag = True
 
-            if (i == len(lines) - 1) and not (hlt_flag):
-                errorList[i] == 'h'
 
             #i
 
             if (i == len(lines) - 1):
-                if (lines[i][0] == 'hlt') or (lines[i][0][-1] ==':' and lines[i][1] == 'hlt'):
-                    errorList[i] == 'i'
+                
+                if not(lines[i][0] == 'hlt') or not(lines[i][0][-1] ==':' and lines[i][1] == 'hlt'):
+                    # print(errorList[i])
+                    errorList[i] = 'i'
+                    # print(errorList[i])
+
 
             
 
@@ -386,7 +388,10 @@ def errors2():
 
             for j in lines[i]:
                 if (j not in keywords) and (j[-1] != ':') and (lines[i][lines[i].index(j) - 1] != 'var') and (j[0] != '$'):
-                    errorList[i] == 'gse'
+                    errorList[i] = 'gse'
+
+    if not (hlt_flag):
+        errorList[i] = 'h'
 
 def errors3():
 
@@ -436,6 +441,8 @@ def errors3():
 errors1()
 errors2()
 errors3()
+
+# print(errorList)
 
 for i in errorList:
     if i!=None:
