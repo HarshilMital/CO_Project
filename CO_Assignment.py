@@ -373,9 +373,7 @@ def errors2():
             if (i == len(lines) - 1):
                 
                 if not(lines[i][0] == 'hlt') and not(lines[i][0][-1] ==':' and lines[i][1] == 'hlt'):
-                    # print(errorList[i])
                     errorList[i] = 'i'
-                    # print(errorList[i])
 
 
             
