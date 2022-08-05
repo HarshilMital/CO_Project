@@ -387,7 +387,7 @@ def errors1():
 def errors2():
     # global lines
     # global errorList
-    hlt_flag = False
+    hlt_flag = 0
 
 
     for i in range(len(lines)):
@@ -399,7 +399,7 @@ def errors2():
 
             #h
             if ('hlt' in lines[i]):
-                hlt_flag = True
+                hlt_flag += 1
 
 
             #i
@@ -413,17 +413,22 @@ def errors2():
             
 
             #general syntax error for the case of anything
-            # check if all the words present in the keywords list or occurs after var or a label(not neccesarily valid)
+            # check if all the words present in the occurs after keywords list or var or a label(not neccesarily valid)
             # or $integer 
 
             keywords = ['add', 'sub', 'ld', 'st', 'mul', 'div', 'rs', 'ls', 'xor', 'or', 'and', 'not', 'cmp', 'jmp', 'jlt', 'jgt', 'je', 'hlt', 'mov', 'var', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R0', 'FLAGS'] 
 
             for j in lines[i]:
-                if (j not in keywords) and (j[-1] != ':') and (lines[i][lines[i].index(j) - 1] != 'var') and (j[0] != '$'):
+                if (j not in keywords) and (j[-1] != ':') and (lines[i][lines[i].index(j) - 1] != 'var') and (j[0] != '$') and (j not in variables) and (j not in labels):
                     errorList[i] = 'gse'
 
-    if not (hlt_flag):
+            
+
+    if (hlt_flag == 0):
         errorList[i] = 'h'
+
+    if (hlt_flag > 1):
+        errorList[i] = 'gse'
 
 def errors3():
 
@@ -436,6 +441,7 @@ def errors3():
                 num = 1
                 if ((lines[m][1][-1] == ':')):
                     errorList[m]='gse'
+                    print('a')
 
 errors1()
 errors2()
