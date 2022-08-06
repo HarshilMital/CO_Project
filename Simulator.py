@@ -241,7 +241,7 @@ while not halt:
 
 
     if pcMod:
-        pcMod = 1
+        pcMod = False
     else: 
         PC +=1
 
