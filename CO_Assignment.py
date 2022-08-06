@@ -2,8 +2,8 @@ import sys
 
 
 #Dictionary of all Instructions + OpCodes, sans move
-opcodes =  {'add':'10000', 'sub':'10001', 'ld':'10100', 'st':'10101', 'mul':'10110', 'div':'10111', 'rs':'11000', 'ls':'11001', 'xor':'11010', 'or':'11011', 'and':'11100', 'not':'11101', 'cmp':'11110', 'jmp':'11111', 'jlt':'01100', 'jgt':'01101', 'je':'01111', 'hlt':'01010'}
-types = {'A':['add', 'sub', 'mul', 'xor', 'or', 'and'], 'B':['rs', 'ls'], 'C':['div', 'not', 'cmp'], 'D':['ld','st'], 'E':['jmp', 'jlt', 'jgt', 'je'], 'F':['hlt']}
+opcodes =  {'addf':'00000', 'subf':'00001', 'movf':'00010', 'add':'10000', 'sub':'10001', 'ld':'10100', 'st':'10101', 'mul':'10110', 'div':'10111', 'rs':'11000', 'ls':'11001', 'xor':'11010', 'or':'11011', 'and':'11100', 'not':'11101', 'cmp':'11110', 'jmp':'11111', 'jlt':'01100', 'jgt':'01101', 'je':'01111', 'hlt':'01010'}
+types = {'A':['add', 'sub', 'mul', 'xor', 'or', 'and', 'addf', 'subf'], 'B':['rs', 'ls'], 'C':['div', 'not', 'cmp'], 'D':['ld','st'], 'E':['jmp', 'jlt', 'jgt', 'je'], 'F':['hlt']}
 
 
 #8 registers, r0 to r7 (r7 being FLAGS), each denoted by its index
@@ -131,15 +131,17 @@ def typeFinder(rawInstruction, opcodes, lbl = None):
     instruction = instruction.lower()
     
     #Case: mov
-    if instruction.lower() == 'mov':
+    if instruction.lower() == 'mov' or instruction.lower() == 'movf':
         #if label is present in the line, the index of the relevant word to check the type of move statement increases by 1
         if lbl == 0:
             keyword = rawInstruction[2][0]
         else:
             keyword = rawInstruction[3][0]
         
-        if (keyword=='$'):
+        if (keyword=='$' and instruction.lower() == 'mov'):
             return 'movB'
+        elif(keyword=='$' and instruction.lower() == 'movf'):
+            return 'movfB'
         else:
             return 'movC'
     
@@ -232,6 +234,63 @@ def memaddr_handler(proposedMem_addr):
         return '0'*(8 - len(mem)) + mem
 
     return mem
+
+
+def floating_to_binary(n):
+    n = str(n)
+    if '.' not in list(n):
+        return -1
+    n = float(n)
+    if (n > 252) or (n < 1):
+        return -1
+    n = str(n)
+
+    fltnum = n.split('.')
+    exp = ''
+    mantissa = ''
+    fltlst = []
+    fltlst.append(bin(int(fltnum[0]))[2:])
+    fltlst.append(float('0.'+fltnum[1]))
+    
+
+    #1.5 -> [1,0.5] -> [1,1] -> exp->0,mtsa->1->000 10000
+    #1.7 -> [1, 0.7]-> [1,error]
+    #2.5 -> [10,0.5]->[10,1]->exp->1, mtsa->01->001 01000
+    #3.25 -> [11,0.25]->[11,10]-> exp->1, mtsa->110-> 001 11000
+    #100.5 -> [1100100,0.5]->[1100100,1]->exp->6, mtsa->?? 1001001 error
+    #100.0 -> [1100100,0.0] ->[1100100, 0]-> exp->6, mtsa->10010 -> 110 10010
+
+    # print(fltlst[0])
+
+    bnry_dcml_pt = ''
+    cntr = 0
+    k = fltlst[1]
+    # print(k)
+    while True:
+        cntr += 1
+        if str(k * 2)[0] == '1':
+            bnry_dcml_pt += '1'
+            k = k * 2 - 1
+        else:
+            bnry_dcml_pt += '0'
+            k *= 2
+        # print(k)
+        if (k == 1) or (cntr > 7-len(fltlst[0])) or (k == 0):
+            break
+        
+    # print(bnry_dcml_pt)
+    # if (cntr > 7-len(fltlst[0])):
+    #     print('error')
+    # else:
+    exp = bin(len(fltlst[0]) - 1)[2:]
+    exp = ((3 - len(exp)) * '0') + exp
+    # print(exp)
+    mantissa = fltlst[0][1:] + bnry_dcml_pt[::-1]
+    # print(mantissa)
+    mantissa = mantissa + ((5 - len(mantissa)) * '0')
+    return ((exp + mantissa)[:8])
+
+
 
 # inp_file = sys.stdin.readlines()
 inp_file  = [line.rstrip() for line in inp_file]
@@ -379,10 +438,16 @@ def errors1():
     for i in range(len(lines)):
         if errorList[i] == None:
             type = typeFinder(lines[i], opcodes)
-            if (type == 'B'):
+            if (type == 'B' or type == 'movB'):
                 if ((immediateHandler(lines[i])=='-1') or (immediateHandler(lines[i])=='-2')):
                     if errorList[i] == None:
                             errorList[i] = 'e'
+            if (type == 'movfB'):
+                if (floating_to_binary(lines[i][2].lstrip('$')) == -1):
+                    if errorList[i] == None:
+                            errorList[i] = 'j'
+
+
 
 def errors2():
     # global lines
@@ -416,7 +481,7 @@ def errors2():
             # check if all the words present in the occurs after keywords list or var or a label(not neccesarily valid)
             # or $integer 
 
-            keywords = ['add', 'sub', 'ld', 'st', 'mul', 'div', 'rs', 'ls', 'xor', 'or', 'and', 'not', 'cmp', 'jmp', 'jlt', 'jgt', 'je', 'hlt', 'mov', 'var', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R0', 'FLAGS'] 
+            keywords = ['addf', 'subf', 'movf','add', 'sub', 'ld', 'st', 'mul', 'div', 'rs', 'ls', 'xor', 'or', 'and', 'not', 'cmp', 'jmp', 'jlt', 'jgt', 'je', 'hlt', 'mov', 'var', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R0', 'FLAGS'] 
 
             for j in lines[i]:
                 if (j not in keywords) and (j[-1] != ':') and (lines[i][lines[i].index(j) - 1] != 'var') and (j[0] != '$') and (j not in variables) and (j not in labels):
@@ -476,6 +541,8 @@ def errorPrint():
                 print(f"Error (line {i+1}): Missing hlt instruction")
             if errorList[i] == 'i':
                 print(f"Error (line {i+1}): hlt not being used as the last instruction")
+            if errorList[i] == 'j':
+                print(f"Error (line {i+1}): Floating point number cannot be represented in CSE112_Floating_point_representation")
             if errorList[i] == 'gse':
                 print(f"Error (line {i+1}): General Syntax Error")
 
@@ -505,8 +572,12 @@ def binary_instruction_memload():
         #so the opcodes dictionary doesn't contain mov at all, mov had to be done manually
         elif(type=='movB'):
             memory[i]  = ('10010' + registerHandler(inp[i][1]) + immediateHandler(inp[i]))
+        elif(type=='movfB'):
+            memory[i]  = ('10010' + registerHandler(inp[i][1]) + floating_to_binary(lines[i][2].lstrip('$')))
         elif(type=='movC'):
             memory[i] = ('1001100000' + registerHandler(inp[i][1]) + registerHandler(inp[i][2]))
+
+        
         
 if error:
     errorPrint()
