@@ -8,6 +8,7 @@ PC = 0
 def pcPrinter (PC, base):
     '''returns binary value of program counter'''
     '''also can do binary conversion w extra zero bits appended for a given base length'''
+    binVal = bin(PC)[2:]
     return((base-len(binVal))*'0' + binVal)
 def binToDec(n):
     return int(n, 2)
@@ -86,13 +87,43 @@ def executionEngine(instruction):
 
         if opcode == '10010':
             #mov immediate
-            
+            RF[r1] = '0'*8 + imm
 
-    
+        if opcode == '11000':
+            #right shift
+            RF[r1] = pcPrinter((binToDec(RF[r1]) >> binToDec(imm)), 16)
+        
+        if opcode == '11001':
+            #left shift
+            valee = pcPrinter((binToDec(RF[r1]) << binToDec(imm)), 0)
+            if len(valee)>16:
+                temp = list(RF['111'])
+                temp[12] = 1
+                RF['111'] = ''.join(temp)
+        
     if curType == 'C':
         r1 = instruction[10:13]
         r2 = instruction[13:]
     
+        if opcode == '10011':
+            #mov register
+            RF[r2] = RF[r1]
+        
+        if opcode == '10111':
+            #divide
+            r3 = r1
+            r4 = r2            
+            r3Val = binToDec(RF[r3])
+            r4Val = binToDec(RF[r4])
+            quot = r3Val//r4Val
+            remVal = r3Val%r4Val
+            RF['000'] = pcPrinter(quot, 16)
+            RF['001'] = pcPrinter(remVal, 16)
+
+        if opcode == '11101':
+            #bitwise not
+            RF[r2] = pcPrinter(~binToDec(RF[r1]), 16)
+
     if curType == 'D':
         r1 = instruction[5:8]
         memAddr = instruction[8:]
