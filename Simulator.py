@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import numpy as np
 #Open text file, save lines to memory
 f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
 instrSet = f.readlines()
@@ -50,7 +52,9 @@ def executionEngine(instruction):
     reset = 1
     global PC
     global memAccess
+    global pcMod
     memAccess = [PC]
+
 
     if curType == 'A':
         r1 = instruction[7:10]
@@ -79,7 +83,7 @@ def executionEngine(instruction):
                 RF['111'] = ''.join(temp)
                 reset = 0
             else:
-                RF[r3] = pcPrinter(0, 16)
+                RF[r3] = pcPrinter(summ, 16)
 
         if opcode == '10110':
             #multiplication
@@ -192,28 +196,29 @@ def executionEngine(instruction):
             #unconditional jump
             PC = binToDec(memAddr)
             pcMod = True
-            memAccess.append(memAddr)
+            memAccess.append(binToDec(memAddr))
+            print('here')
 
         if opcode == '01100':
             #jump if less than
             if RF['111'][13]:
                 PC = binToDec(memAddr)
                 pcMod = True
-                memAccess.append(memAddr)
+                memAccess.append(binToDec(memAddr))
 
         if opcode == '01101':
             #jump if greater than
             if RF['111'][14]:
                 PC = binToDec(memAddr)
                 pcMod = True
-                memAccess.append(memAddr)
+                memAccess.append(binToDec(memAddr))
         
         if opcode == '01111':
             #jump if equal
             if RF['111'][15]:
                 PC = binToDec(memAddr)
                 pcMod = True
-                memAccess.append(memAddr)
+                memAccess.append(binToDec(memAddr))
     
     if curType == 'F':
         global halt
@@ -226,6 +231,7 @@ def executionEngine(instruction):
 cycle = 0
 cyclesX = []
 while not halt:
+    print(PC)
     instruction = MEM[PC]
     executionEngine(instruction)
     
@@ -237,7 +243,7 @@ while not halt:
         regList.append(RF[pcPrinter(i, 3)])
     print(' '.join(regList))
 
-
+    print(pcMod)
     if pcMod:
         pcMod = False
     else: 
@@ -253,3 +259,9 @@ while not halt:
 
 for i in MEM:
     print(i.strip('\n'))
+
+plt.scatter(cyclesX, memY, color='teal', marker='.')
+plt.title('Memory Address vs Cycle Number', fontsize=14)
+plt.xlabel('Cycle Number', fontsize=14)
+plt.ylabel('Memory Address', fontsize=14)
+plt.show()
