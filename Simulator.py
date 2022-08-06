@@ -25,11 +25,12 @@ def keyReturn(d, s):
         if s in d[i]:
             return i
 
-
+halt = False
 def executionEngine(instruction):
     types = {'A':['10000', '10001', '10110', '11010', '11011', '11100'], 'B':['10010', '11000', '11001'], 'C':['10011', '10111', '11101', '11110'], 'D':['10100', '10101'], 'E':['11111', '01100', '01101', '01111'], 'F':['01010']}
     opcode = instruction[:5]
     curType = keyReturn(types, opcode)
+
 
     if curType == 'A':
         r1 = instruction[7:10]
@@ -81,6 +82,7 @@ def executionEngine(instruction):
             #bitwise and
             RF[r3] = binToDec(RF[r1])&binToDec(RF[r2])
 
+
     if curType == 'B':
         r1 = instruction[5:8]
         imm = instruction[8:]
@@ -101,6 +103,7 @@ def executionEngine(instruction):
                 temp[12] = 1
                 RF['111'] = ''.join(temp)
         
+
     if curType == 'C':
         r1 = instruction[10:13]
         r2 = instruction[13:]
@@ -124,11 +127,52 @@ def executionEngine(instruction):
             #bitwise not
             RF[r2] = pcPrinter(~binToDec(RF[r1]), 16)
 
+        if opcode == '11110':
+            #compare
+            if binToDec(RF[r1]) < binToDec(RF[r2]): 
+                temp = list(RF['111'])
+                temp[13] = 1
+                RF['111'] = ''.join(temp)
+            elif binToDec(RF[r1]) > binToDec(RF[r2]):
+                temp = list(RF['111'])
+                temp[14] = 1
+                RF['111'] = ''.join(temp)
+            else:
+                temp = list(RF['111'])
+                temp[15] = 1
+                RF['111'] = ''.join(temp)
+
+
     if curType == 'D':
         r1 = instruction[5:8]
         memAddr = instruction[8:]
+        
+        if opcode == '10100':
+            #load
+            RF[r1] = MEM[binToDec(memAddr)]
+        
+        if opcode == '10100':
+            #store
+            MEM[binToDec(memAddr)] = RF[r1]
     
+
     if curType == 'E':
         memAddr = instruction[8:]
+
+        if opcode == '01100':
+            #jump if less than
+            if RF['111'][13]:
+                PC = binToDec(memAddr)
+        
+        if opcode == '01101':
+            #jump if greater than
+            if RF['111'][14]:
+                PC = binToDec(memAddr)
+        
+        if opcode == '01111':
+            #jump if equal
+            if RF['111'][15]:
+                PC = binToDec(memAddr)
     
-    # if curType == 'F':
+    if curType == 'F':
+        halt = True
