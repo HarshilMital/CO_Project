@@ -267,7 +267,7 @@ def executionEngine(instruction):
             #load
             RF[r1] = MEM[binToDec(memAddr)]
         
-        if opcode == '10100':
+        if opcode == '10101':
             #store
             MEM[binToDec(memAddr)] = RF[r1]
         
