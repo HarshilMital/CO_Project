@@ -43,10 +43,13 @@ def resetFlags():
 memY = []
 def executionEngine(instruction):
     '''executes given instruction from MEM'''
+    instruction = instruction.strip('\n')
     types = {'A':['10000', '10001', '10110', '11010', '11011', '11100'], 'B':['10010', '11000', '11001'], 'C':['10011', '10111', '11101', '11110'], 'D':['10100', '10101'], 'E':['11111', '01100', '01101', '01111'], 'F':['01010']}
     opcode = instruction[:5]
     curType = keyReturn(types, opcode)
     reset = 1
+    global PC
+    global memAccess
     memAccess = [PC]
 
     if curType == 'A':
@@ -60,7 +63,7 @@ def executionEngine(instruction):
             if len(pcPrinter(summ, 0))>16:
                 #overflow
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
                 reset = 0
             else:
@@ -72,7 +75,7 @@ def executionEngine(instruction):
             if summ<0:
                 #overflow
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
                 reset = 0
             else:
@@ -84,7 +87,7 @@ def executionEngine(instruction):
             if len(pcPrinter(summ, 0))>16:
                 #overflow
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
                 reset = 0
             else:
@@ -120,7 +123,7 @@ def executionEngine(instruction):
             valee = pcPrinter((binToDec(RF[r1]) << binToDec(imm)), 0)
             if len(valee)>16:
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
                 reset = 0
             else:
@@ -154,15 +157,15 @@ def executionEngine(instruction):
             #compare
             if binToDec(RF[r1]) < binToDec(RF[r2]): 
                 temp = list(RF['111'])
-                temp[13] = 1
+                temp[13] = '1'
                 RF['111'] = ''.join(temp)
             elif binToDec(RF[r1]) > binToDec(RF[r2]):
                 temp = list(RF['111'])
-                temp[14] = 1
+                temp[14] = '1'
                 RF['111'] = ''.join(temp)
             else:
                 temp = list(RF['111'])
-                temp[15] = 1
+                temp[15] = '1'
                 RF['111'] = ''.join(temp)
 
 
@@ -249,4 +252,4 @@ while not halt:
 
 
 for i in MEM:
-    print(i)
+    print(i.strip('\n'))
