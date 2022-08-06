@@ -286,21 +286,21 @@ def executionEngine(instruction):
 
         if opcode == '01100':
             #jump if less than
-            if RF['111'][13]:
+            if int(RF['111'][13]):
                 PC = binToDec(memAddr)
                 pcMod = True
                 memAccess.append(binToDec(memAddr))
 
         if opcode == '01101':
             #jump if greater than
-            if RF['111'][14]:
+            if int(RF['111'][14]):
                 PC = binToDec(memAddr)
                 pcMod = True
                 memAccess.append(binToDec(memAddr))
         
         if opcode == '01111':
             #jump if equal
-            if RF['111'][15]:
+            if int(RF['111'][15]):
                 PC = binToDec(memAddr)
                 pcMod = True
                 memAccess.append(binToDec(memAddr))
