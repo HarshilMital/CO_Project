@@ -26,11 +26,16 @@ def keyReturn(d, s):
             return i
 
 halt = False
+
+def resetFlags():
+    global RF
+    RF['111'] = '0'*16
+
 def executionEngine(instruction):
     types = {'A':['10000', '10001', '10110', '11010', '11011', '11100'], 'B':['10010', '11000', '11001'], 'C':['10011', '10111', '11101', '11110'], 'D':['10100', '10101'], 'E':['11111', '01100', '01101', '01111'], 'F':['01010']}
     opcode = instruction[:5]
     curType = keyReturn(types, opcode)
-
+    reset = 1
 
     if curType == 'A':
         r1 = instruction[7:10]
@@ -45,6 +50,7 @@ def executionEngine(instruction):
                 temp = list(RF['111'])
                 temp[12] = 1
                 RF['111'] = ''.join(temp)
+                reset = 0
             else:
                 RF[r3] = pcPrinter(summ, 16)
         
@@ -56,6 +62,7 @@ def executionEngine(instruction):
                 temp = list(RF['111'])
                 temp[12] = 1
                 RF['111'] = ''.join(temp)
+                reset = 0
             else:
                 RF[r3] = pcPrinter(0, 16)
 
@@ -67,6 +74,7 @@ def executionEngine(instruction):
                 temp = list(RF['111'])
                 temp[12] = 1
                 RF['111'] = ''.join(temp)
+                reset = 0
             else:
                 RF[r3] = pcPrinter(summ, 16)
         
@@ -102,6 +110,9 @@ def executionEngine(instruction):
                 temp = list(RF['111'])
                 temp[12] = 1
                 RF['111'] = ''.join(temp)
+                reset = 0
+            else:
+                RF[r1] = pcPrinter(valee, 16)
         
 
     if curType == 'C':
@@ -176,3 +187,8 @@ def executionEngine(instruction):
     
     if curType == 'F':
         halt = True
+
+    if reset:
+        resetFlags()
+
+    
