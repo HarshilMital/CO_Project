@@ -1,4 +1,6 @@
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
 #Open text file, save lines to memory
 # f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
 instrSet = sys.stdin.readlines()
@@ -280,28 +282,28 @@ def executionEngine(instruction):
             #unconditional jump
             PC = binToDec(memAddr)
             pcMod = True
-            memAccess.append(memAddr)
+            memAccess.append(binToDec(memAddr))
 
         if opcode == '01100':
             #jump if less than
             if RF['111'][13]:
                 PC = binToDec(memAddr)
                 pcMod = True
-                memAccess.append(memAddr)
+                memAccess.append(binToDec(memAddr))
 
         if opcode == '01101':
             #jump if greater than
             if RF['111'][14]:
                 PC = binToDec(memAddr)
                 pcMod = True
-                memAccess.append(memAddr)
+                memAccess.append(binToDec(memAddr))
         
         if opcode == '01111':
             #jump if equal
             if RF['111'][15]:
                 PC = binToDec(memAddr)
                 pcMod = True
-                memAccess.append(memAddr)
+                memAccess.append(binToDec(memAddr))
     
     if curType == 'F':
         global halt
@@ -341,3 +343,10 @@ while not halt:
 
 for i in MEM:
     print(i.strip('\n'))
+
+
+plt.scatter(cyclesX, memY, color='teal', marker='.')
+plt.title('Memory Address vs Cycle Number', fontsize=14)
+plt.xlabel('Cycle Number', fontsize=14)
+plt.ylabel('Memory Address', fontsize=14)
+plt.show()
