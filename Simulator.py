@@ -1,10 +1,18 @@
 #Open text file, save lines to memory
 f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
-MEM = f.readlines()
+instrSet = f.readlines()
 f.close()
+
+
+#initialise MEM
+MEM = ['0'*16 for i in range(256)]
+for i in range(len(instrSet)):
+    MEM[i] = instrSet[i]
+
 
 #initialise program counter
 PC = 0
+pcMod = False
 def pcPrinter (PC, base):
     '''returns binary value of program counter'''
     '''also can do binary conversion w extra zero bits appended for a given base length'''
@@ -25,12 +33,24 @@ def keyReturn(d, s):
         if s in d[i]:
             return i
 
+
 halt = False
+def resetFlags():
+    '''resets Flags'''
+    global RF
+    RF['111'] = '0'*16
+
+memY = []
 def executionEngine(instruction):
+    '''executes given instruction from MEM'''
+    instruction = instruction.strip('\n')
     types = {'A':['10000', '10001', '10110', '11010', '11011', '11100'], 'B':['10010', '11000', '11001'], 'C':['10011', '10111', '11101', '11110'], 'D':['10100', '10101'], 'E':['11111', '01100', '01101', '01111'], 'F':['01010']}
     opcode = instruction[:5]
     curType = keyReturn(types, opcode)
-
+    reset = 1
+    global PC
+    global memAccess
+    memAccess = [PC]
 
     if curType == 'A':
         r1 = instruction[7:10]
@@ -43,8 +63,9 @@ def executionEngine(instruction):
             if len(pcPrinter(summ, 0))>16:
                 #overflow
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
+                reset = 0
             else:
                 RF[r3] = pcPrinter(summ, 16)
         
@@ -54,8 +75,9 @@ def executionEngine(instruction):
             if summ<0:
                 #overflow
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
+                reset = 0
             else:
                 RF[r3] = pcPrinter(0, 16)
 
@@ -65,8 +87,9 @@ def executionEngine(instruction):
             if len(pcPrinter(summ, 0))>16:
                 #overflow
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
+                reset = 0
             else:
                 RF[r3] = pcPrinter(summ, 16)
         
@@ -100,8 +123,11 @@ def executionEngine(instruction):
             valee = pcPrinter((binToDec(RF[r1]) << binToDec(imm)), 0)
             if len(valee)>16:
                 temp = list(RF['111'])
-                temp[12] = 1
+                temp[12] = '1'
                 RF['111'] = ''.join(temp)
+                reset = 0
+            else:
+                RF[r1] = pcPrinter(valee, 16)
         
 
     if curType == 'C':
@@ -131,15 +157,15 @@ def executionEngine(instruction):
             #compare
             if binToDec(RF[r1]) < binToDec(RF[r2]): 
                 temp = list(RF['111'])
-                temp[13] = 1
+                temp[13] = '1'
                 RF['111'] = ''.join(temp)
             elif binToDec(RF[r1]) > binToDec(RF[r2]):
                 temp = list(RF['111'])
-                temp[14] = 1
+                temp[14] = '1'
                 RF['111'] = ''.join(temp)
             else:
                 temp = list(RF['111'])
-                temp[15] = 1
+                temp[15] = '1'
                 RF['111'] = ''.join(temp)
 
 
@@ -154,25 +180,76 @@ def executionEngine(instruction):
         if opcode == '10100':
             #store
             MEM[binToDec(memAddr)] = RF[r1]
+        
+        memAccess.append(binToDec(memAddr))
     
 
     if curType == 'E':
         memAddr = instruction[8:]
+        global pcMod
+
+        if opcode == '11111':
+            #unconditional jump
+            PC = binToDec(memAddr)
+            pcMod = True
+            memAccess.append(memAddr)
 
         if opcode == '01100':
             #jump if less than
             if RF['111'][13]:
                 PC = binToDec(memAddr)
-        
+                pcMod = True
+                memAccess.append(memAddr)
+
         if opcode == '01101':
             #jump if greater than
             if RF['111'][14]:
                 PC = binToDec(memAddr)
+                pcMod = True
+                memAccess.append(memAddr)
         
         if opcode == '01111':
             #jump if equal
             if RF['111'][15]:
                 PC = binToDec(memAddr)
+                pcMod = True
+                memAccess.append(memAddr)
     
     if curType == 'F':
+        global halt
         halt = True
+
+    if reset:
+        resetFlags()
+
+
+cycle = 0
+cyclesX = []
+while not halt:
+    instruction = MEM[PC]
+    executionEngine(instruction)
+    
+
+    print(pcPrinter(PC, 8), end = ' ')
+    regList = []
+    
+    for i in range(8):
+        regList.append(RF[pcPrinter(i, 3)])
+    print(' '.join(regList))
+
+
+    if pcMod:
+        pcMod = 1
+    else: 
+        PC +=1
+
+    cycle +=1
+    for i in range(len(memAccess)):
+        #memAccess contains all the memory addresses accessed in decimal form
+        #they're appended with the corresponding cycle to memY
+        cyclesX.append(cycle)
+        memY.append(memAccess[i])
+
+
+for i in MEM:
+    print(i.strip('\n'))
