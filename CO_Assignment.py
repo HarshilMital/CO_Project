@@ -377,7 +377,7 @@ def errors1():
                     errorList[i] = 'a'
                 continue
             
-            elif(type=='movB'):
+            elif(type=='movB' or type == 'movfB'):
                 if ((registerHandler(lines[i][lbl+1])=='-1')):
                     errorList[i] = 'a'
                 continue
