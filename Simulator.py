@@ -1,9 +1,9 @@
-import matplotlib.pyplot as plt
-import numpy as np
+import sys
 #Open text file, save lines to memory
-f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
-instrSet = f.readlines()
-f.close()
+# f = open("C:/Users/mercu/OneDrive/Desktop/College/sem2/CO/Run.txt", 'r')
+instrSet = sys.stdin.readlines()
+instrSet = [line.rstrip() for line in instrSet]
+# f.close()
 
 
 #initialise MEM
